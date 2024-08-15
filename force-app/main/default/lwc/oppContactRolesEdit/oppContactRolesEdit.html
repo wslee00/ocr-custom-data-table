@@ -19,7 +19,16 @@
                 <template for:each={contactRoles} for:item="contactRole">
                     <tr key={contactRole.Id} class="slds-hint-parent">
                         <td data-label="Contact">
-                            <div title={contactRole.Name}>{contactRole.Name}</div>
+                            <div title={contactRole.Name}>
+                                <lightning-record-picker
+                                    label="Contact"
+                                    variant="label-hidden"
+                                    value={contactRole.ContactId}
+                                    placeholder="Search Contacts..."
+                                    object-api-name="Contact"
+                                >
+                                </lightning-record-picker>
+                            </div>
                         </td>
                         <td data-label="Role">
                             <div title={contactRole.Role}>
