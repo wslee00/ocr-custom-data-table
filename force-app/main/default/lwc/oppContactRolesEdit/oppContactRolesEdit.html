@@ -12,6 +12,7 @@
                     <th scope="col">
                         <div class="slds-truncate" title="Primary">Primary?</div>
                     </th>
+                    <th scope="col"></th>
                 </tr>
             </thead>
             <tbody>
@@ -33,6 +34,17 @@
                                 name="primary"
                                 checked={contactRole.IsPrimary}
                             ></lightning-input>
+                        </td>
+                        <td data-label="Delete">
+                            <lightning-button-icon
+                                class="delete-button"
+                                icon-name="utility:delete"
+                                variant="bare"
+                                onclick={handleDelete}
+                                data-id={contactRole.Id}
+                                title="Delete"
+                            >
+                            </lightning-button-icon>
                         </td>
                     </tr>
                 </template>
