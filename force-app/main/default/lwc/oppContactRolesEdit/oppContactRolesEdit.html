@@ -19,13 +19,19 @@
                 <template for:each={contactRoles} for:item="contactRole">
                     <tr key={contactRole.Id} class="slds-hint-parent">
                         <td data-label="Contact">
-                            <div class="slds-truncate" title={contactRole.Name}>
-                                {contactRole.Name}
-                            </div>
+                            <div title={contactRole.Name}>{contactRole.Name}</div>
                         </td>
                         <td data-label="Role">
-                            <div class="slds-truncate" title={contactRole.Role}>
-                                {contactRole.Role}
+                            <div title={contactRole.Role}>
+                                <lightning-combobox
+                                    name="role"
+                                    label="Role"
+                                    variant="label-hidden"
+                                    value={contactRole.Role}
+                                    placeholder="Select Role"
+                                    options={roles}
+                                    onchange={handleRoleChange}
+                                ></lightning-combobox>
                             </div>
                         </td>
                         <td data-label="Primary">
@@ -50,5 +56,12 @@
                 </template>
             </tbody>
         </table>
+        <div class="slds-m-top_medium slds-m-left_medium">
+            <lightning-button
+                label="Add Contact Role"
+                onclick={handleAdd}
+                variant="brand"
+            ></lightning-button>
+        </div>
     </lightning-card>
 </template>
