@@ -17,51 +17,10 @@
             </thead>
             <tbody>
                 <template for:each={contactRoles} for:item="contactRole">
-                    <tr key={contactRole.Id} class="slds-hint-parent">
-                        <td data-label="Contact">
-                            <div title={contactRole.Name}>
-                                <lightning-record-picker
-                                    label="Contact"
-                                    variant="label-hidden"
-                                    value={contactRole.ContactId}
-                                    placeholder="Search Contacts..."
-                                    object-api-name="Contact"
-                                >
-                                </lightning-record-picker>
-                            </div>
-                        </td>
-                        <td data-label="Role">
-                            <div title={contactRole.Role}>
-                                <lightning-combobox
-                                    name="role"
-                                    label="Role"
-                                    variant="label-hidden"
-                                    value={contactRole.Role}
-                                    placeholder="Select Role"
-                                    options={roleOptions}
-                                    onchange={handleRoleChange}
-                                ></lightning-combobox>
-                            </div>
-                        </td>
-                        <td data-label="Primary">
-                            <lightning-input
-                                type="checkbox"
-                                name="primary"
-                                checked={contactRole.IsPrimary}
-                            ></lightning-input>
-                        </td>
-                        <td data-label="Delete">
-                            <lightning-button-icon
-                                class="delete-button"
-                                icon-name="utility:delete"
-                                variant="bare"
-                                onclick={handleDelete}
-                                data-id={contactRole.Id}
-                                title="Delete"
-                            >
-                            </lightning-button-icon>
-                        </td>
-                    </tr>
+                    <c-opp-contact-role-row
+                        key={contactRole.Id}
+                        contact-role={contactRole}
+                    ></c-opp-contact-role-row>
                 </template>
             </tbody>
         </table>
