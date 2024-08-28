@@ -7,6 +7,8 @@ export default class OppContactRolesEdit extends LightningElement {
     contactRoles = [];
     roleOptions = [];
 
+    _changed = [];
+
     @wire(getOppContactRoles, { opportunityId: '$recordId' })
     processGetContactRoles({ error, data }) {
         if (data) {
@@ -18,14 +20,50 @@ export default class OppContactRolesEdit extends LightningElement {
     }
 
     handleContactChange(event) {
-        console.log('parent handleContactChange', event.detail);
+        const index = this._changed.findIndex(
+            (item) => item.contactRoleId === event.detail.contactRoleId,
+        );
+        if (index === -1) {
+            this._changed.push(event.detail);
+        } else {
+            this._changed[index] = {
+                ...this._changed[index],
+                ...event.detail,
+            };
+        }
+
+        console.log(this._changed);
     }
 
     handlePrimaryChange(event) {
-        console.log('parent handlePrimaryChange', event.detail);
+        const index = this._changed.findIndex(
+            (item) => item.contactRoleId === event.detail.contactRoleId,
+        );
+        if (index === -1) {
+            this._changed.push(event.detail);
+        } else {
+            this._changed[index] = {
+                ...this._changed[index],
+                ...event.detail,
+            };
+        }
+
+        console.log(this._changed);
     }
 
     handleRoleChange(event) {
-        console.log('parent handleRoleChange', event.detail);
+        const index = this._changed.findIndex(
+            (item) => item.contactRoleId === event.detail.contactRoleId,
+        );
+        if (index === -1) {
+            this._changed.push(event.detail);
+        } else {
+            this._changed[index] = {
+                ...this._changed[index],
+                ...event.detail,
+            };
+        }
+
+        console.log(this._changed);
     }
 }
