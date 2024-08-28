@@ -7,7 +7,7 @@ export default class OppContactRolesEdit extends LightningElement {
     contactRoles = [];
     roleOptions = [];
 
-    _changed = [];
+    _changed = {};
 
     @wire(getOppContactRoles, { opportunityId: '$recordId' })
     processGetContactRoles({ error, data }) {
@@ -20,17 +20,11 @@ export default class OppContactRolesEdit extends LightningElement {
     }
 
     handleContactRoleChange(event) {
-        const index = this._changed.findIndex(
-            (item) => item.contactRoleId === event.detail.contactRoleId,
-        );
-        if (index === -1) {
-            this._changed.push(event.detail);
-        } else {
-            this._changed[index] = {
-                ...this._changed[index],
-                ...event.detail,
-            };
-        }
+        const contactRoleId = event.detail.contactRoleId;
+        this._changed[contactRoleId] = {
+            ...this._changed[contactRoleId],
+            ...event.detail,
+        };
 
         console.log(this._changed);
     }
