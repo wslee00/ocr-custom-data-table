@@ -1,4 +1,6 @@
 import { api, LightningElement, wire } from 'lwc';
+import { reduceErrors } from 'c/baseUtils';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import getOppContactRoles from '@salesforce/apex/OppContactRolesEditController.getOppContactRoles';
 import saveOppContactRoles from '@salesforce/apex/OppContactRolesEditController.saveOppContactRoles';
 
@@ -6,6 +8,7 @@ export default class OppContactRolesEdit extends LightningElement {
     @api recordId;
 
     contactRoles = [];
+    isSaving = false;
     roleOptions = [];
 
     _changed = {};
@@ -21,7 +24,7 @@ export default class OppContactRolesEdit extends LightningElement {
     }
 
     handleContactRoleChange(event) {
-        const contactRoleId = event.detail.contactRoleId;
+        const contactRoleId = event.detail.Id;
         this._changed[contactRoleId] = {
             ...this._changed[contactRoleId],
             ...event.detail,
@@ -29,11 +32,23 @@ export default class OppContactRolesEdit extends LightningElement {
     }
 
     async handleSave() {
-        console.log('changed: ', this._changed);
+        this.isSaving = true;
         try {
             await saveOppContactRoles({ oppContactRoles: Object.values(this._changed) });
         } catch (error) {
+            this.isSaving = false;
             console.error(error);
+            const errors = reduceErrors(error);
+            this.dispatchEvent(
+                new ShowToastEvent({
+                    title: 'Error Saving Contact Roles',
+                    message: errors.join(', '),
+                    variant: 'error',
+                }),
+            );
+            return;
         }
+
+        this.isSaving = false;
     }
 }

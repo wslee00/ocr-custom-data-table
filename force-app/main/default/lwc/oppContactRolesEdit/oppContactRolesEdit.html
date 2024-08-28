@@ -1,5 +1,10 @@
 <template>
-    <lightning-card title="Contact Roles" icon-name="standard:contact">
+    <lightning-card class="slds-is-relative" title="Contact Roles" icon-name="standard:contact">
+        <lightning-spinner
+            alternative-text="Saving..."
+            lwc:if={isSaving}
+            size="medium"
+        ></lightning-spinner>
         <table class="slds-table slds-table_cell-buffer slds-table_bordered">
             <thead>
                 <tr class="slds-line-height_reset">
