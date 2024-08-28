@@ -50,5 +50,6 @@ export default class OppContactRolesEdit extends LightningElement {
         }
 
         this.isSaving = false;
+        this._changed = {};
     }
 }
