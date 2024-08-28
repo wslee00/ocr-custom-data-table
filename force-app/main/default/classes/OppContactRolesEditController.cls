@@ -7,4 +7,9 @@ public with sharing class OppContactRolesEditController {
             WHERE OpportunityId = :opportunityId
         ];
     }
+
+    @AuraEnabled
+    public static void saveOppContactRoles(List<OpportunityContactRole> oppContactRoles) {
+        update oppContactRoles;
+    }
 }

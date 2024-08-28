@@ -1,5 +1,6 @@
 import { api, LightningElement, wire } from 'lwc';
 import getOppContactRoles from '@salesforce/apex/OppContactRolesEditController.getOppContactRoles';
+import saveOppContactRoles from '@salesforce/apex/OppContactRolesEditController.saveOppContactRoles';
 
 export default class OppContactRolesEdit extends LightningElement {
     @api recordId;
@@ -25,7 +26,14 @@ export default class OppContactRolesEdit extends LightningElement {
             ...this._changed[contactRoleId],
             ...event.detail,
         };
+    }
 
-        console.log(this._changed);
+    async handleSave() {
+        console.log('changed: ', this._changed);
+        try {
+            await saveOppContactRoles({ oppContactRoles: Object.values(this._changed) });
+        } catch (error) {
+            console.error(error);
+        }
     }
 }
