@@ -7,6 +7,7 @@
                 value={contactRole.ContactId}
                 placeholder="Search Contacts..."
                 object-api-name="Contact"
+                onchange={handleContactChange}
             >
             </lightning-record-picker>
         </div>
@@ -29,6 +30,7 @@
             type="checkbox"
             name="primary"
             checked={contactRole.IsPrimary}
+            onchange={handlePrimaryChange}
         ></lightning-input>
     </td>
     <td data-label="Delete">

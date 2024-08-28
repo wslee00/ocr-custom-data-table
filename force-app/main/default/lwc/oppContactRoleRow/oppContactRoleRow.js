@@ -22,4 +22,37 @@ export default class OppContactRoleRow extends LightningElement {
             console.error(error);
         }
     }
+
+    handleContactChange(event) {
+        this.dispatchEvent(
+            new CustomEvent('contactchange', {
+                detail: {
+                    contactRoleId: this.contactRole.Id,
+                    contactId: event.detail.recordId,
+                },
+            }),
+        );
+    }
+
+    handleRoleChange(event) {
+        this.dispatchEvent(
+            new CustomEvent('rolechange', {
+                detail: {
+                    contactRoleId: this.contactRole.Id,
+                    role: event.detail.value,
+                },
+            }),
+        );
+    }
+
+    handlePrimaryChange(event) {
+        this.dispatchEvent(
+            new CustomEvent('primarychange', {
+                detail: {
+                    contactRoleId: this.contactRole.Id,
+                    isPrimary: event.detail.checked,
+                },
+            }),
+        );
+    }
 }

@@ -20,6 +20,9 @@
                     <c-opp-contact-role-row
                         key={contactRole.Id}
                         contact-role={contactRole}
+                        oncontactchange={handleContactChange}
+                        onprimarychange={handlePrimaryChange}
+                        onrolechange={handleRoleChange}
                     ></c-opp-contact-role-row>
                 </template>
             </tbody>

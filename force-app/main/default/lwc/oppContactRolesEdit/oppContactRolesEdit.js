@@ -17,7 +17,15 @@ export default class OppContactRolesEdit extends LightningElement {
         }
     }
 
+    handleContactChange(event) {
+        console.log('parent handleContactChange', event.detail);
+    }
+
+    handlePrimaryChange(event) {
+        console.log('parent handlePrimaryChange', event.detail);
+    }
+
     handleRoleChange(event) {
-        console.log(event.detail.value);
+        console.log('parent handleRoleChange', event.detail);
     }
 }
