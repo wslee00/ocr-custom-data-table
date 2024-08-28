@@ -19,39 +19,7 @@ export default class OppContactRolesEdit extends LightningElement {
         }
     }
 
-    handleContactChange(event) {
-        const index = this._changed.findIndex(
-            (item) => item.contactRoleId === event.detail.contactRoleId,
-        );
-        if (index === -1) {
-            this._changed.push(event.detail);
-        } else {
-            this._changed[index] = {
-                ...this._changed[index],
-                ...event.detail,
-            };
-        }
-
-        console.log(this._changed);
-    }
-
-    handlePrimaryChange(event) {
-        const index = this._changed.findIndex(
-            (item) => item.contactRoleId === event.detail.contactRoleId,
-        );
-        if (index === -1) {
-            this._changed.push(event.detail);
-        } else {
-            this._changed[index] = {
-                ...this._changed[index],
-                ...event.detail,
-            };
-        }
-
-        console.log(this._changed);
-    }
-
-    handleRoleChange(event) {
+    handleContactRoleChange(event) {
         const index = this._changed.findIndex(
             (item) => item.contactRoleId === event.detail.contactRoleId,
         );
