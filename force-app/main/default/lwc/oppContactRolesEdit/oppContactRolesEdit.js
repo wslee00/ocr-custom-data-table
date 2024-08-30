@@ -28,7 +28,18 @@ export default class OppContactRolesEdit extends LightningElement {
         }
     }
 
-    handleAdd() {}
+    handleAdd() {
+        this.contactRoleDtos = [
+            ...this.contactRoleDtos,
+            {
+                record: {
+                    Id: crypto.randomUUID(),
+                    OpportunityId: this.recordId,
+                },
+                dbAction: 'create',
+            },
+        ];
+    }
 
     handleContactRoleChange(event) {
         const contactRoleId = event.detail.Id;
@@ -45,13 +56,23 @@ export default class OppContactRolesEdit extends LightningElement {
                 dbAction: contactRoleDto.dbAction === 'create' ? 'create' : 'update',
             };
         });
+
+        console.log('contactRoleDtos', this.contactRoleDtos);
     }
 
     async handleSave() {
         this.isSaving = true;
-        const contactRolesToSave = this.contactRoleDtos.map(
-            (contactRoleDto) => contactRoleDto.record,
-        );
+        const contactRolesToSave = this.contactRoleDtos.map((contactRoleDto) => {
+            if (contactRoleDto.dbAction === 'create') {
+                return {
+                    ...contactRoleDto.record,
+                    Id: null,
+                };
+            }
+
+            return contactRoleDto.record;
+        });
+        console.log('contactRolesToSave', contactRolesToSave);
         try {
             await saveOppContactRoles({ oppContactRoles: contactRolesToSave });
         } catch (error) {
@@ -69,5 +90,15 @@ export default class OppContactRolesEdit extends LightningElement {
         }
 
         this.isSaving = false;
+        this._resetDbActions();
+    }
+
+    _resetDbActions() {
+        this.contactRoleDtos = this.contactRoleDtos.map((contactRoleDto) => {
+            return {
+                ...contactRoleDto,
+                dbAction: null,
+            };
+        });
     }
 }
