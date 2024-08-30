@@ -7,34 +7,53 @@ import saveOppContactRoles from '@salesforce/apex/OppContactRolesEditController.
 export default class OppContactRolesEdit extends LightningElement {
     @api recordId;
 
-    contactRoles = [];
+    contactRoleDtos = [];
     isSaving = false;
     roleOptions = [];
-
-    _changed = {};
 
     @wire(getOppContactRoles, { opportunityId: '$recordId' })
     processGetContactRoles({ error, data }) {
         if (data) {
-            this.contactRoles = data;
+            this.contactRoleDtos = data.map((contactRole) => {
+                return {
+                    record: {
+                        ...contactRole,
+                    },
+                    dbAction: null,
+                };
+            });
         }
         if (error) {
             console.error(error);
         }
     }
 
+    handleAdd() {}
+
     handleContactRoleChange(event) {
         const contactRoleId = event.detail.Id;
-        this._changed[contactRoleId] = {
-            ...this._changed[contactRoleId],
-            ...event.detail,
-        };
+        this.contactRoleDtos = this.contactRoleDtos.map((contactRoleDto) => {
+            if (contactRoleDto.record.Id !== contactRoleId) {
+                return contactRoleDto;
+            }
+
+            return {
+                record: {
+                    ...contactRoleDto.record,
+                    ...event.detail,
+                },
+                dbAction: contactRoleDto.dbAction === 'create' ? 'create' : 'update',
+            };
+        });
     }
 
     async handleSave() {
         this.isSaving = true;
+        const contactRolesToSave = this.contactRoleDtos.map(
+            (contactRoleDto) => contactRoleDto.record,
+        );
         try {
-            await saveOppContactRoles({ oppContactRoles: Object.values(this._changed) });
+            await saveOppContactRoles({ oppContactRoles: contactRolesToSave });
         } catch (error) {
             this.isSaving = false;
             console.error(error);
@@ -50,6 +69,5 @@ export default class OppContactRolesEdit extends LightningElement {
         }
 
         this.isSaving = false;
-        this._changed = {};
     }
 }

@@ -21,10 +21,10 @@
                 </tr>
             </thead>
             <tbody>
-                <template for:each={contactRoles} for:item="contactRole">
+                <template for:each={contactRoleDtos} for:item="contactRoleDto">
                     <c-opp-contact-role-row
-                        key={contactRole.Id}
-                        contact-role={contactRole}
+                        key={contactRoleDto.record.Id}
+                        contact-role={contactRoleDto.record}
                         oncontactrolechange={handleContactRoleChange}
                     ></c-opp-contact-role-row>
                 </template>
