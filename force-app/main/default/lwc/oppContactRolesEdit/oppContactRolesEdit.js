@@ -88,28 +88,8 @@ export default class OppContactRolesEdit extends LightningElement {
 
     async handleSave() {
         this.isSaving = true;
-        const contactRolesToUpsert = this._contactRoleDtos
-            .filter((contactRoleDto) => {
-                return contactRoleDto.dbAction !== 'delete';
-            })
-            .map((contactRoleDto) => {
-                if (contactRoleDto.dbAction === 'create') {
-                    return {
-                        ...contactRoleDto.record,
-                        Id: null,
-                    };
-                }
-
-                return contactRoleDto.record;
-            });
-
-        const contactRolesToDelete = this._contactRoleDtos
-            .filter((contactRoleDto) => {
-                return contactRoleDto.dbAction === 'delete';
-            })
-            .map((contactRoleDto) => {
-                return { Id: contactRoleDto.record.Id };
-            });
+        const contactRolesToUpsert = this._getContactRolesToUpsert(this._contactRoleDtos);
+        const contactRolesToDelete = this._getContactRolesToDelete(this._contactRoleDtos);
         try {
             await saveOppContactRoles({ contactRolesToUpsert, contactRolesToDelete });
         } catch (error) {
@@ -128,6 +108,33 @@ export default class OppContactRolesEdit extends LightningElement {
 
         this.isSaving = false;
         this._resetDbActions();
+    }
+
+    _getContactRolesToDelete(contactRoleDtos) {
+        return contactRoleDtos
+            .filter((contactRoleDto) => {
+                return contactRoleDto.dbAction === 'delete';
+            })
+            .map((contactRoleDto) => {
+                return { Id: contactRoleDto.record.Id };
+            });
+    }
+
+    _getContactRolesToUpsert(contactRoleDtos) {
+        return contactRoleDtos
+            .filter((contactRoleDto) => {
+                return contactRoleDto.dbAction !== 'delete';
+            })
+            .map((contactRoleDto) => {
+                if (contactRoleDto.dbAction === 'create') {
+                    return {
+                        ...contactRoleDto.record,
+                        Id: null,
+                    };
+                }
+
+                return contactRoleDto.record;
+            });
     }
 
     _resetDbActions() {
