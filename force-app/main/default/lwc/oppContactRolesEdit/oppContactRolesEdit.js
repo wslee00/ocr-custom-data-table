@@ -7,14 +7,15 @@ import saveOppContactRoles from '@salesforce/apex/OppContactRolesEditController.
 export default class OppContactRolesEdit extends LightningElement {
     @api recordId;
 
-    contactRoleDtos = [];
     isSaving = false;
     roleOptions = [];
+
+    _contactRoleDtos = [];
 
     @wire(getOppContactRoles, { opportunityId: '$recordId' })
     processGetContactRoles({ error, data }) {
         if (data) {
-            this.contactRoleDtos = data.map((contactRole) => {
+            this._contactRoleDtos = data.map((contactRole) => {
                 return {
                     record: {
                         ...contactRole,
@@ -28,9 +29,22 @@ export default class OppContactRolesEdit extends LightningElement {
         }
     }
 
+    get contactRoles() {
+        if (!this._contactRoleDtos) {
+            return [];
+        }
+        return this._contactRoleDtos
+            .filter((contactRoleDto) => {
+                return contactRoleDto.dbAction !== 'delete';
+            })
+            .map((contactRoleDto) => {
+                return contactRoleDto.record;
+            });
+    }
+
     handleAdd() {
-        this.contactRoleDtos = [
-            ...this.contactRoleDtos,
+        this._contactRoleDtos = [
+            ...this._contactRoleDtos,
             {
                 record: {
                     Id: crypto.randomUUID(),
@@ -41,9 +55,23 @@ export default class OppContactRolesEdit extends LightningElement {
         ];
     }
 
+    handleContactRoleDelete(event) {
+        const contactRoleId = event.detail;
+        this._contactRoleDtos = this._contactRoleDtos.map((contactRoleDto) => {
+            if (contactRoleDto.record.Id !== contactRoleId) {
+                return contactRoleDto;
+            }
+
+            return {
+                ...contactRoleDto,
+                dbAction: 'delete',
+            };
+        });
+    }
+
     handleContactRoleChange(event) {
         const contactRoleId = event.detail.Id;
-        this.contactRoleDtos = this.contactRoleDtos.map((contactRoleDto) => {
+        this._contactRoleDtos = this._contactRoleDtos.map((contactRoleDto) => {
             if (contactRoleDto.record.Id !== contactRoleId) {
                 return contactRoleDto;
             }
@@ -56,25 +84,34 @@ export default class OppContactRolesEdit extends LightningElement {
                 dbAction: contactRoleDto.dbAction === 'create' ? 'create' : 'update',
             };
         });
-
-        console.log('contactRoleDtos', this.contactRoleDtos);
     }
 
     async handleSave() {
         this.isSaving = true;
-        const contactRolesToSave = this.contactRoleDtos.map((contactRoleDto) => {
-            if (contactRoleDto.dbAction === 'create') {
-                return {
-                    ...contactRoleDto.record,
-                    Id: null,
-                };
-            }
+        const contactRolesToUpsert = this._contactRoleDtos
+            .filter((contactRoleDto) => {
+                return contactRoleDto.dbAction !== 'delete';
+            })
+            .map((contactRoleDto) => {
+                if (contactRoleDto.dbAction === 'create') {
+                    return {
+                        ...contactRoleDto.record,
+                        Id: null,
+                    };
+                }
 
-            return contactRoleDto.record;
-        });
-        console.log('contactRolesToSave', contactRolesToSave);
+                return contactRoleDto.record;
+            });
+
+        const contactRolesToDelete = this._contactRoleDtos
+            .filter((contactRoleDto) => {
+                return contactRoleDto.dbAction === 'delete';
+            })
+            .map((contactRoleDto) => {
+                return { Id: contactRoleDto.record.Id };
+            });
         try {
-            await saveOppContactRoles({ oppContactRoles: contactRolesToSave });
+            await saveOppContactRoles({ contactRolesToUpsert, contactRolesToDelete });
         } catch (error) {
             this.isSaving = false;
             console.error(error);
@@ -94,11 +131,13 @@ export default class OppContactRolesEdit extends LightningElement {
     }
 
     _resetDbActions() {
-        this.contactRoleDtos = this.contactRoleDtos.map((contactRoleDto) => {
-            return {
-                ...contactRoleDto,
-                dbAction: null,
-            };
-        });
+        this._contactRoleDtos = this._contactRoleDtos
+            .filter((contactRoleDto) => contactRoleDto.dbAction !== 'delete')
+            .map((contactRoleDto) => {
+                return {
+                    ...contactRoleDto,
+                    dbAction: null,
+                };
+            });
     }
 }

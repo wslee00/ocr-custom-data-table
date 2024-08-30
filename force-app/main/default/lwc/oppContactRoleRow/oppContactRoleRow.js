@@ -29,6 +29,10 @@ export default class OppContactRoleRow extends LightningElement {
         });
     }
 
+    handleDelete() {
+        this.dispatchEvent(new CustomEvent('contactroledelete', { detail: this.contactRole.Id }));
+    }
+
     handleRoleChange(event) {
         this._dispatchContactRoleChangeEvent({
             Role: event.detail.value,

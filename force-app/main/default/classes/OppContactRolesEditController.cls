@@ -9,7 +9,11 @@ public with sharing class OppContactRolesEditController {
     }
 
     @AuraEnabled
-    public static void saveOppContactRoles(List<OpportunityContactRole> oppContactRoles) {
-        upsert oppContactRoles;
+    public static void saveOppContactRoles(
+        List<OpportunityContactRole> contactRolesToUpsert,
+        List<OpportunityContactRole> contactRolesToDelete
+    ) {
+        delete contactRolesToDelete;
+        upsert contactRolesToUpsert;
     }
 }
