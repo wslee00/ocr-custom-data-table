@@ -89,6 +89,7 @@ export default class OppContactRolesEdit extends LightningElement {
     async handleSave() {
         this.isSaving = true;
         const contactRolesToUpsert = this._getContactRolesToUpsert(this._contactRoleDtos);
+        console.log('contactRolesToUpsert', contactRolesToUpsert);
         const contactRolesToDelete = this._getContactRolesToDelete(this._contactRoleDtos);
         try {
             await saveOppContactRoles({ contactRolesToUpsert, contactRolesToDelete });
@@ -123,7 +124,7 @@ export default class OppContactRolesEdit extends LightningElement {
     _getContactRolesToUpsert(contactRoleDtos) {
         return contactRoleDtos
             .filter((contactRoleDto) => {
-                return contactRoleDto.dbAction !== 'delete';
+                return contactRoleDto.dbAction && contactRoleDto.dbAction !== 'delete';
             })
             .map((contactRoleDto) => {
                 if (contactRoleDto.dbAction === 'create') {
