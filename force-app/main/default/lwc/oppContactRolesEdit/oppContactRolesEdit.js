@@ -3,6 +3,7 @@ import { reduceErrors } from 'c/baseUtils';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import getOppContactRoles from '@salesforce/apex/OppContactRolesEditController.getOppContactRoles';
 import saveOppContactRoles from '@salesforce/apex/OppContactRolesEditController.saveOppContactRoles';
+import getContact from '@salesforce/apex/OppContactRolesEditController.getContact';
 
 export default class OppContactRolesEdit extends LightningElement {
     @api recordId;
@@ -108,6 +109,22 @@ export default class OppContactRolesEdit extends LightningElement {
 
     async handleSave() {
         this.isSaving = true;
+        try {
+            await this._validate();
+        } catch (error) {
+            this.isSaving = false;
+            console.error(error);
+            this.dispatchEvent(
+                new ShowToastEvent({
+                    title: 'Error Saving Contact Roles',
+                    message: error.message,
+                    variant: 'error',
+                }),
+            );
+
+            return;
+        }
+
         const contactRolesToUpsert = this._getContactRolesToUpsert(this._contactRoleDtos);
         const contactRolesToDelete = this._getContactRolesToDelete(this._contactRoleDtos);
         try {
@@ -166,5 +183,26 @@ export default class OppContactRolesEdit extends LightningElement {
                     dbAction: null,
                 };
             });
+    }
+
+    async _validate() {
+        const contactIds = new Set();
+        let dupContactId;
+        for (const contactRoleDto of this._contactRoleDtos) {
+            const contactId = contactRoleDto.record.ContactId;
+            if (contactIds.has(contactId)) {
+                dupContactId = contactId;
+                break;
+            }
+
+            contactIds.add(contactId);
+        }
+
+        if (!dupContactId) {
+            return;
+        }
+
+        const contact = await getContact({ contactId: dupContactId });
+        throw new Error(`Contact ${contact.Name} is duplicated.`);
     }
 }

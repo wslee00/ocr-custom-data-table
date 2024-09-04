@@ -16,4 +16,9 @@ public with sharing class OppContactRolesEditController {
         delete contactRolesToDelete;
         upsert contactRolesToUpsert;
     }
+
+    @AuraEnabled
+    public static Contact getContact(Id contactId) {
+        return [SELECT Name FROM Contact WHERE Id = :contactId];
+    }
 }
