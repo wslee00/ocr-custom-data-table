@@ -86,10 +86,29 @@ export default class OppContactRolesEdit extends LightningElement {
         });
     }
 
+    handlePrimaryChange(event) {
+        this.handleContactRoleChange(event);
+        this._contactRoleDtos = this._contactRoleDtos.map((contactRoleDto) => {
+            if (contactRoleDto.record.Id === event.detail.Id) {
+                return contactRoleDto;
+            }
+            if (!contactRoleDto.record.IsPrimary) {
+                return contactRoleDto;
+            }
+
+            return {
+                record: {
+                    ...contactRoleDto.record,
+                    IsPrimary: false,
+                },
+                dbAction: contactRoleDto.dbAction === 'create' ? 'create' : 'update',
+            };
+        });
+    }
+
     async handleSave() {
         this.isSaving = true;
         const contactRolesToUpsert = this._getContactRolesToUpsert(this._contactRoleDtos);
-        console.log('contactRolesToUpsert', contactRolesToUpsert);
         const contactRolesToDelete = this._getContactRolesToDelete(this._contactRoleDtos);
         try {
             await saveOppContactRoles({ contactRolesToUpsert, contactRolesToDelete });

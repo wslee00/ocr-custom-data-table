@@ -40,9 +40,14 @@ export default class OppContactRoleRow extends LightningElement {
     }
 
     handlePrimaryChange(event) {
-        this._dispatchContactRoleChangeEvent({
-            IsPrimary: event.detail.checked,
-        });
+        this.dispatchEvent(
+            new CustomEvent('primarychange', {
+                detail: {
+                    Id: this.contactRole.Id,
+                    IsPrimary: event.detail.checked,
+                },
+            }),
+        );
     }
 
     _dispatchContactRoleChangeEvent(eventDetail) {
