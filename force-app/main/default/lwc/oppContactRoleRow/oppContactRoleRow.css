@@ -1,3 +1,10 @@
 :host {
     display: table-row;
 }
+
+.delete-button {
+    --slds-c-icon-color-foreground: var(
+        --slds-g-color-error-base-40,
+        var(--lwc-colorTextError, rgb(234, 0, 30))
+    );
+}
